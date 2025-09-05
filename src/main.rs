@@ -1,9 +1,19 @@
-use crate::model::App;
+use crate::{model::App, ping::PingSession};
 
 mod model;
-mod view;
+pub mod ping;
 mod update;
+mod view;
 
+fn main() {
+    let session = PingSession::new("amadmin", "amadmin").unwrap();
+    println!(
+        "{:#?}",
+        session.list_users()
+    );
+}
+
+/*
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
     let terminal = ratatui::init();
@@ -11,3 +21,4 @@ fn main() -> color_eyre::Result<()> {
     ratatui::restore();
     result
 }
+    */
