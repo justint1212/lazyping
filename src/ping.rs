@@ -13,6 +13,8 @@ use std::error::Error;
 use reqwest::blocking::Client;
 use reqwest::header::{AUTHORIZATION, HeaderMap, HeaderValue};
 
+use crate::model::{Device, User};
+
 type DynError = Box<dyn Error + Send + Sync>;
 
 fn am_endpoint_json(endpoint: &str) -> String {
@@ -46,18 +48,6 @@ struct DevicesResponse {
     result: Vec<DeviceRaw>,
 }
 
-#[derive(Debug)]
-pub struct Device {
-    id: String,
-    name: String,
-}
-
-#[derive(Debug)]
-pub struct User {
-    id: String,
-    username: String,
-    display_name: String,
-}
 
 impl PingSession {
     pub fn new(username: &str, password: &str) -> Result<Self, DynError> {
