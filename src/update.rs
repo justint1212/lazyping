@@ -39,7 +39,7 @@ fn handle_key_users(app: &mut App, key: KeyEvent, session: &PingSession) {
             state.selected_idx = idx;
         }
 
-        (_, KeyCode::Char(' ')) => {
+        (_, KeyCode::Char(' ') | KeyCode::Enter) => {
             app.selected_user_id = state.users.get(state.selected_idx).unwrap().id.clone();
             app.selected = View::Devices;
             load_devices(app, session);
@@ -50,7 +50,7 @@ fn handle_key_users(app: &mut App, key: KeyEvent, session: &PingSession) {
     }
 }
 
-fn handle_key_mfa(app: &mut App, key: KeyEvent) {
+fn handle_key_mfa(app: &mut App, key: KeyEvent, session: &PingSession) {
     let state = &mut app.mfa_vm;
     match (key.modifiers, key.code) {
         (_, KeyCode::Char('k')) => {
@@ -67,7 +67,14 @@ fn handle_key_mfa(app: &mut App, key: KeyEvent) {
         }
 
         (_, KeyCode::Char('h')) => {
+            app.mfa_vm.devices.clear();
             app.selected = View::Users; // go back to userse
+        }
+
+        (_, KeyCode::Char('r')) => {
+            session.reset_mfa(&app.selected_user_id);
+            refresh(app, session);
+            app.selected = View::Users;
         }
 
         // add other key handlers here.

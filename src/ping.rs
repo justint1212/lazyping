@@ -48,7 +48,6 @@ struct DevicesResponse {
     result: Vec<DeviceRaw>,
 }
 
-
 impl PingSession {
     pub fn new(username: &str, password: &str) -> Result<Self, DynError> {
         let unauthd_client = Client::builder()
@@ -204,5 +203,22 @@ impl PingSession {
                 display_name: format!("{} {}", r.given_name, r.sn),
             })
             .collect())
+    }
+
+    pub fn reset_mfa(&self, user_id: &str) -> Result<(), DynError> {
+        let res = self
+            .am_client
+            .post(idm_endpoint(&format!(
+                "users/{}/devices/2fa/oath?_action=reset",
+                user_id
+            )))
+            .send()?;
+
+        // Optionally, check for HTTP success status
+        if res.status().is_success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to reset MFA: HTTP {}", res.status()).into())
+        }
     }
 }
